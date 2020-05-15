@@ -3,3 +3,20 @@ references/*
 
 # data
 data/*
+
+# checkpoints
+ckpts/*
+results/*
+
+# files
+*.zip
+*.swp
+
+# python compilation files
+*.pyc
+
+# wandb
+wandb/*
+
+# pycache
+*__pycache__*
