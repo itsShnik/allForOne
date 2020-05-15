@@ -24,6 +24,13 @@ class PATH:
             'clevr': self.DATA_ROOT + '/clevr',
         }
 
+        self.IMAGES_PATH = {
+            'vqa': {
+                'train': self.DATA_PATH['vqa'] + '/images' + '/train2014',
+                'val': self.DATA_PATH['vqa'] + '/images' + '/val2014',
+                'test': self.DATA_PATH['vqa'] + '/images' + '/test2015',
+            },
+        }
 
         self.FEATS_PATH = {
             'vqa': {
@@ -123,6 +130,11 @@ class PATH:
                     print(self.FEATS_PATH[dataset][item], 'NOT EXIST')
                     exit(-1)
 
+            for item in self.IMAGES_PATH[dataset]:
+                if not os.path.exists(self.IMAGES_PATH[dataset][item]):
+                    print(self.IMAGES_PATH[dataset][item], 'NOT EXIST')
+                    exit(-1)
+
             for item in self.RAW_PATH[dataset]:
                 if not os.path.exists(self.RAW_PATH[dataset][item]):
                     print(self.RAW_PATH[dataset][item], 'NOT EXIST')
@@ -133,6 +145,12 @@ class PATH:
                 for item in self.FEATS_PATH[dataset]:
                     if not os.path.exists(self.FEATS_PATH[dataset][item]):
                         print(self.FEATS_PATH[dataset][item], 'NOT EXIST')
+                        exit(-1)
+            
+            for dataset in self.IMAGES_PATH:
+                for item in self.IMAGES_PATH[dataset]:
+                    if not os.path.exists(self.IMAGES_PATH[dataset][item]):
+                        print(self.IMAGES_PATH[dataset][item], 'NOT EXIST')
                         exit(-1)
 
             for dataset in self.RAW_PATH:
