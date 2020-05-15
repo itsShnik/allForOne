@@ -7,6 +7,7 @@ import numpy as np
 import glob, json, torch, random
 import torch.utils.data as Data
 import torch.nn as nn
+from torchvision import transforms
 from openvqa.utils.feat_filter import feat_filter
 
 class BaseDataSet(Data.Dataset):
@@ -24,7 +25,7 @@ class BaseDataSet(Data.Dataset):
                 std=[0.229, 0.224, 0.225])
 
         self.transform = transforms.compose([
-            transforms.RandomSizedCrop(224),
+            transforms.RandomResizedCrop(224),
             transforms.ToTensor(),
             self.normalize,
             ])
@@ -42,9 +43,14 @@ class BaseDataSet(Data.Dataset):
 
         ques_ix_iter, ans_iter, iid = self.load_ques_ans(idx)
 
-        frcn_feat_iter, grid_feat_iter, bbox_feat_iter = self.load_img_feats(idx, iid)
+        img_iter, frcn_feat_iter, grid_feat_iter, bbox_feat_iter = self.load_img_feats(idx, iid)
+
+        # transform the image first
+        # already converts the image to tensor, so no need to do so later on
+        img_iter = self.transform(img_iter)
 
         return \
+            img_iter,\
             torch.from_numpy(frcn_feat_iter),\
             torch.from_numpy(grid_feat_iter),\
             torch.from_numpy(bbox_feat_iter),\
