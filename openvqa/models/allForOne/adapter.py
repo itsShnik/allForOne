@@ -7,6 +7,7 @@
 
 import torch.nn as nn
 import torch
+import torchvision.models as models
 from openvqa.core.base_dataset import BaseAdapter
 from openvqa.utils.make_mask import make_mask
 
@@ -18,12 +19,19 @@ class Adapter(BaseAdapter):
 
 
     def vqa_init(self, __C):
+        '''
         imgfeat_linear_size = __C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][1]
         if __C.USE_BBOX_FEAT:
             self.bbox_linear = nn.Linear(5, __C.BBOXFEAT_EMB_SIZE)
             imgfeat_linear_size += __C.BBOXFEAT_EMB_SIZE
         self.frcn_linear = nn.Linear(imgfeat_linear_size, __C.HIDDEN_SIZE)
+        '''
 
+        # the output size of vgg19_bn is 1000
+        self.img_model = models.vgg19_bn(pretrained=True)
+
+        # project the features using a linear layer
+        self.img_linear = nn.Linear(1000, __C.IMAGE_LINEAR_SIZE)
 
     def gqa_init(self, __C):
         imgfeat_linear_size = __C.FEAT_SIZE['gqa']['FRCN_FEAT_SIZE'][1]
@@ -41,14 +49,20 @@ class Adapter(BaseAdapter):
 
 
     def vqa_forward(self, feat_dict):
+        img = feat_dict['IMG']
         frcn_feat = feat_dict['FRCN_FEAT']
         bbox_feat = feat_dict['BBOX_FEAT']
 
+        '''
         if self.__C.USE_BBOX_FEAT:
             bbox_feat = self.bbox_linear(bbox_feat)
             frcn_feat = torch.cat((frcn_feat, bbox_feat), dim=-1)
 
         img_feat = self.frcn_linear(frcn_feat)
+        '''
+
+        img_feat = self.img_model(img)
+        img_feat = self.img_linear(img_feat)
 
         return img_feat
 
