@@ -14,6 +14,7 @@ class Cfgs(BaseCfgs):
 
         self.LAYER = 6
         self.NUM_TEAMS = 10
+        self.IMG_LINEAR_SIZE = 512
         self.WORD_EMBED_SIZE = 512
         self.HIDDEN_SIZE = 512
         self.BBOXFEAT_EMB_SIZE = 2048
