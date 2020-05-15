@@ -5,6 +5,7 @@
 
 import numpy as np
 import glob, json, re, en_vectors_web_lg
+from PIL import Image
 from openvqa.core.base_dataset import BaseDataSet
 from openvqa.utils.ans_punct import prep_ans
 
@@ -17,7 +18,13 @@ class DataSet(BaseDataSet):
         # ---- Raw data loading ----
         # --------------------------
 
-        # Loading all image paths
+        # Loading all images paths
+        img_path_list = \
+            glob.glob(__C.IMAGES_PATH[__C.DATASET]['train'] + '/*.jpg') + \
+            glob.glob(__C.IMAGES_PATH[__C.DATASET]['val'] + '/*.jpg') + \
+            glob.glob(__C.IMAGES_PATH[__C.DATASET]['test'] + '/*.jpg')
+
+        # Loading all features paths
         frcn_feat_path_list = \
             glob.glob(__C.FEATS_PATH[__C.DATASET]['train'] + '/*.npz') + \
             glob.glob(__C.FEATS_PATH[__C.DATASET]['val'] + '/*.npz') + \
@@ -58,6 +65,9 @@ class DataSet(BaseDataSet):
         # ---- Data statistic ----
         # ------------------------
 
+        # {image id} -> {images path}
+        self.iid_to_img_path = self.img_path_load(img_path_list)
+
         # {image id} -> {image feature absolutely path}
         self.iid_to_frcn_feat_path = self.img_feat_path_load(frcn_feat_path_list)
 
@@ -78,6 +88,15 @@ class DataSet(BaseDataSet):
         print('')
 
 
+    def img_path_load(self, path_list):
+        iid_to_path = {}
+
+        for ix, path in enumerate(path_list):
+            iid = str(int(path.split('/')[-1].split('_')[-1].split('.')[0]))
+            # print(iid)
+            iid_to_path[iid] = path
+
+        return iid_to_path
 
     def img_feat_path_load(self, path_list):
         iid_to_path = {}
@@ -203,7 +222,9 @@ class DataSet(BaseDataSet):
             img_feat_pad_size=self.__C.FEAT_SIZE['vqa']['BBOX_FEAT_SIZE'][0]
         )
 
-        return frcn_feat_iter, np.zeros(1), bbox_feat_iter
+        img = Image.open(self.iid_to_img_path[iid])
+
+        return img, frcn_feat_iter, np.zeros(1), bbox_feat_iter
 
 
 
