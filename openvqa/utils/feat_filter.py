@@ -4,10 +4,11 @@
 # --------------------------------------------------------
 
 
-def feat_filter(dataset, frcn_feat, grid_feat, bbox_feat):
+def feat_filter(dataset, img, frcn_feat, grid_feat, bbox_feat):
     feat_dict = {}
 
     if dataset in ['vqa']:
+        feat_dict['IMG'] = img
         feat_dict['FRCN_FEAT'] = frcn_feat
         feat_dict['BBOX_FEAT'] = bbox_feat
 
