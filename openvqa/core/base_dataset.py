@@ -92,8 +92,8 @@ class BaseAdapter(nn.Module):
     def clevr_init(self, __C):
         raise NotImplementedError()
 
-    def forward(self, frcn_feat, grid_feat, bbox_feat):
-        feat_dict = feat_filter(self.__C.DATASET, frcn_feat, grid_feat, bbox_feat)
+    def forward(self, img, frcn_feat, grid_feat, bbox_feat):
+        feat_dict = feat_filter(self.__C.DATASET, img, frcn_feat, grid_feat, bbox_feat)
 
         if self.__C.DATASET in ['vqa']:
             return self.vqa_forward(feat_dict)
