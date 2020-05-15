@@ -69,6 +69,7 @@ def test_engine(__C, dataset, state_dict=None, validation=False):
     )
 
     for step, (
+            img_iter,
             frcn_feat_iter,
             grid_feat_iter,
             bbox_feat_iter,
@@ -81,12 +82,14 @@ def test_engine(__C, dataset, state_dict=None, validation=False):
             int(data_size / __C.EVAL_BATCH_SIZE),
         ), end='          ')
 
+        img_iter = img_iter.cuda()
         frcn_feat_iter = frcn_feat_iter.cuda()
         grid_feat_iter = grid_feat_iter.cuda()
         bbox_feat_iter = bbox_feat_iter.cuda()
         ques_ix_iter = ques_ix_iter.cuda()
 
         pred = net(
+            img_iter,
             frcn_feat_iter,
             grid_feat_iter,
             bbox_feat_iter,
