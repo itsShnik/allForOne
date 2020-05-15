@@ -34,15 +34,15 @@ class Net(nn.Module):
         self.proj = nn.Linear(__C.HIDDEN_SIZE, answer_size)
 
 
-    def forward(self, frcn_feat, grid_feat, bbox_feat, ques_ix):
+    def forward(self, img, frcn_feat, grid_feat, bbox_feat, ques_ix):
 
         # Pre-process Language Feature
         lang_feat = self.embedding(ques_ix)
 
-        img_feat = self.adapter(frcn_feat, grid_feat, bbox_feat)
+        img_feat = self.adapter(img, frcn_feat, grid_feat, bbox_feat)
 
-        # sum the img_feats
-        img_feat = img_feat.sum(1).unsqueeze(1)
+        # unsqueeze along dim 1 to concat to lang feat
+        img_feat = img_feat.unsqueeze(1)
 
         # Backbone Framework
         lang_feat = self.backbone(
