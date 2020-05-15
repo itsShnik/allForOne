@@ -135,6 +135,7 @@ def train_engine(__C, dataset, dataset_eval=None):
         time_start = time.time()
         # Iteration
         for step, (
+                img_iter,
                 frcn_feat_iter,
                 grid_feat_iter,
                 bbox_feat_iter,
@@ -144,6 +145,7 @@ def train_engine(__C, dataset, dataset_eval=None):
 
             optim.zero_grad()
 
+            img_iter = img_iter.cuda()
             frcn_feat_iter = frcn_feat_iter.cuda()
             grid_feat_iter = grid_feat_iter.cuda()
             bbox_feat_iter = bbox_feat_iter.cuda()
@@ -154,6 +156,9 @@ def train_engine(__C, dataset, dataset_eval=None):
             for accu_step in range(__C.GRAD_ACCU_STEPS):
                 loss_tmp = 0
 
+                sub_img_iter = \
+                    img_iter[accu_step * __C.SUB_BATCH_SIZE:
+                                  (accu_step + 1) * __C.SUB_BATCH_SIZE]
                 sub_frcn_feat_iter = \
                     frcn_feat_iter[accu_step * __C.SUB_BATCH_SIZE:
                                   (accu_step + 1) * __C.SUB_BATCH_SIZE]
@@ -171,6 +176,7 @@ def train_engine(__C, dataset, dataset_eval=None):
                              (accu_step + 1) * __C.SUB_BATCH_SIZE]
 
                 pred = net(
+                    sub_img_iter,
                     sub_frcn_feat_iter,
                     sub_grid_feat_iter,
                     sub_bbox_feat_iter,
