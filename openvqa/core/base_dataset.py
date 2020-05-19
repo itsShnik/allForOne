@@ -21,13 +21,12 @@ class BaseDataSet(Data.Dataset):
         self.token_size = None
         self.ans_size = None
 
-        self.normalize = normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], \
+        self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], \
                 std=[0.229, 0.224, 0.225])
 
-        self.transform = transforms.compose([
+        self.transform = transforms.Compose([
             transforms.RandomResizedCrop(224),
             transforms.ToTensor(),
-            self.normalize,
             ])
 
 
@@ -48,6 +47,8 @@ class BaseDataSet(Data.Dataset):
         # transform the image first
         # already converts the image to tensor, so no need to do so later on
         img_iter = self.transform(img_iter)
+
+        img_iter = self.normalize(img_iter)
 
         return \
             img_iter,\
