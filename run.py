@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
     cfg_file = "configs/{}/{}.yml".format(args.DATASET, args.MODEL)
     with open(cfg_file, 'r') as f:
-        yaml_dict = yaml.load(f)
+        yaml_dict = yaml.load(f, Loader=yaml.FullLoader)
 
     __C = CfgLoader(yaml_dict['MODEL_USE']).load()
     args = __C.str_to_bool(args)
