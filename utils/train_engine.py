@@ -108,6 +108,10 @@ def train_engine(__C, dataset, dataset_eval=None):
     logfile.write(str(__C))
     logfile.close()
 
+
+
+    # obtain histogram of each gradients in network as it trains
+
     # Training script
     for epoch in range(start_epoch, __C.MAX_EPOCH):
 
@@ -214,7 +218,7 @@ def train_engine(__C, dataset, dataset_eval=None):
                     mode_str,
                     loss_tmp / __C.SUB_BATCH_SIZE,
                     optim._rate
-                ), end='          ')
+                ), end=' ')
 
             # Gradient norm clipping
             if __C.GRAD_NORM_CLIP > 0:
@@ -278,6 +282,7 @@ def train_engine(__C, dataset, dataset_eval=None):
             '\n\n'
         )
         logfile.close()
+        
 
         # Eval after every epoch
         if dataset_eval is not None:
