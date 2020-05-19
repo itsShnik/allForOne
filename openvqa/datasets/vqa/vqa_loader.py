@@ -223,6 +223,7 @@ class DataSet(BaseDataSet):
         )
 
         img = Image.open(self.iid_to_img_path[iid])
+        img = img.convert('RGB')
 
         return img, frcn_feat_iter, np.zeros(1), bbox_feat_iter
 
