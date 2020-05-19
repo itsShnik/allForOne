@@ -30,6 +30,10 @@ class Adapter(BaseAdapter):
         # the output size of vgg19_bn is 1000
         self.img_model = models.vgg19_bn(pretrained=True)
 
+        # set model non trainable
+        for params in self.img_model.parameters():
+            params.requires_grad = False
+
         # project the features using a linear layer
         self.img_linear = nn.Linear(1000, __C.IMAGE_LINEAR_SIZE)
 
