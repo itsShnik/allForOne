@@ -33,14 +33,14 @@ class DataSet(BaseDataSet):
         # Loading question word list
         stat_ques_list = \
             json.load(open(__C.RAW_PATH[__C.DATASET]['train'], 'r'))['questions'] + \
-            json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r'))['questions'] + \
-            json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))['questions'] + \
-            json.load(open(__C.RAW_PATH[__C.DATASET]['vg'], 'r'))['questions']
+            json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r'))['questions']
+            #json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))['questions'] + \
+            #json.load(open(__C.RAW_PATH[__C.DATASET]['vg'], 'r'))['questions']
 
         # Loading answer word list
-        # stat_ans_list = \
-        #     json.load(open(__C.RAW_PATH[__C.DATASET]['train-anno'], 'r'))['annotations'] + \
-        #     json.load(open(__C.RAW_PATH[__C.DATASET]['val-anno'], 'r'))['annotations']
+        stat_ans_list = \
+             json.load(open(__C.RAW_PATH[__C.DATASET]['train-anno'], 'r'))['annotations'] + \
+             json.load(open(__C.RAW_PATH[__C.DATASET]['val-anno'], 'r'))['annotations']
 
         # Loading question and answer list
         self.ques_list = []
@@ -81,7 +81,7 @@ class DataSet(BaseDataSet):
 
         # Answers statistic
         self.ans_to_ix, self.ix_to_ans = self.ans_stat('openvqa/datasets/vqa/answer_dict.json')
-        # self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
+        #self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
         self.ans_size = self.ans_to_ix.__len__()
         print(' ========== Answer token vocab size (occur more than {} times):'.format(8), self.ans_size)
         print('Finished!')
@@ -152,28 +152,28 @@ class DataSet(BaseDataSet):
         return token_to_ix, pretrained_emb
 
 
-    # def ans_stat(self, stat_ans_list, ans_freq):
-    #     ans_to_ix = {}
-    #     ix_to_ans = {}
-    #     ans_freq_dict = {}
+    #def ans_stat(self, stat_ans_list, ans_freq):
+    #    ans_to_ix = {}
+    #    ix_to_ans = {}
+    #    ans_freq_dict = {}
     #
-    #     for ans in stat_ans_list:
-    #         ans_proc = prep_ans(ans['multiple_choice_answer'])
-    #         if ans_proc not in ans_freq_dict:
-    #             ans_freq_dict[ans_proc] = 1
-    #         else:
-    #             ans_freq_dict[ans_proc] += 1
+    #    for ans in stat_ans_list:
+    #        ans_proc = prep_ans(ans['multiple_choice_answer'])
+    #        if ans_proc not in ans_freq_dict:
+    #            ans_freq_dict[ans_proc] = 1
+    #        else:
+    #            ans_freq_dict[ans_proc] += 1
     #
-    #     ans_freq_filter = ans_freq_dict.copy()
-    #     for ans in ans_freq_dict:
-    #         if ans_freq_dict[ans] <= ans_freq:
-    #             ans_freq_filter.pop(ans)
+    #    ans_freq_filter = ans_freq_dict.copy()
+    #    for ans in ans_freq_dict:
+    #        if ans_freq_dict[ans] <= ans_freq:
+    #            ans_freq_filter.pop(ans)
     #
-    #     for ans in ans_freq_filter:
-    #         ix_to_ans[ans_to_ix.__len__()] = ans
-    #         ans_to_ix[ans] = ans_to_ix.__len__()
+    #    for ans in ans_freq_filter:
+    #        ix_to_ans[ans_to_ix.__len__()] = ans
+    #        ans_to_ix[ans] = ans_to_ix.__len__()
     #
-    #     return ans_to_ix, ix_to_ans
+    #    return ans_to_ix, ix_to_ans
 
     def ans_stat(self, json_file):
         ans_to_ix, ix_to_ans = json.load(open(json_file, 'r'))
@@ -193,7 +193,7 @@ class DataSet(BaseDataSet):
             iid = str(ans['image_id'])
 
             # Process question
-            ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token=14)
+            ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token=300)
 
             # Process answer
             ans_iter = self.proc_ans(ans, self.ans_to_ix)
@@ -204,12 +204,19 @@ class DataSet(BaseDataSet):
             ques = self.ques_list[idx]
             iid = str(ques['image_id'])
 
-            ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token=14)
+            ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token=300)
 
             return ques_ix_iter, np.zeros(1), iid
 
 
     def load_img_feats(self, idx, iid):
+        if int(iid) == 0:
+            img = np.zeros((224, 224, 3))
+            img = np.uint8(img)
+            img = Image.fromarray(img)
+            img = img.convert('RGB')
+            return img, np.zeros((100,2048)), np.zeros(1), np.zeros((100,5))
+
         frcn_feat = np.load(self.iid_to_frcn_feat_path[iid])
         frcn_feat_x = frcn_feat['x'].transpose((1, 0))
         frcn_feat_iter = self.proc_img_feat(frcn_feat_x, img_feat_pad_size=self.__C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][0])
