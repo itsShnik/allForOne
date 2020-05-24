@@ -36,8 +36,8 @@ To run the method on the VQA dataset alone or the imdb_dataset alone change the 
 
 ## Acknoledgements
 
-I have used some of the code from the ![openvqa framework][https://github.com/MILVLG/openvqa] and I would like to thank the authors for maintaining such amazing repository.
+I have used some of the code from the [openvqa framework](https://github.com/MILVLG/openvqa) and I would like to thank the authors for maintaining such amazing repository.
 
 ## Citations
 
-The All for one model was proposed by Bryan McCann and Nat Roth. Link to the paper ![here][https://cs224d.stanford.edu/reports/McCannRoth.pdf].
+The All for one model was proposed by Bryan McCann and Nat Roth. Link to the paper [here](https://cs224d.stanford.edu/reports/McCannRoth.pdf).
