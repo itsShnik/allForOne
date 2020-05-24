@@ -26,6 +26,7 @@ def train_engine(__C, dataset, dataset_eval=None):
         token_size,
         ans_size
     )
+    net.float()
     net.cuda()
     net.train()
 
@@ -91,6 +92,7 @@ def train_engine(__C, dataset, dataset_eval=None):
     #         drop_last=True
     #     )
     # else:
+    
     dataloader = Data.DataLoader(
         dataset,
         batch_size=__C.BATCH_SIZE,
