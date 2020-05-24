@@ -1,6 +1,6 @@
 # All for one : Multi-modal Multi-task learning
 
-![Model Image][images/model_image.png?raw=true]
+![Model Image](images/model_image.png?raw=true)
 
 ## Data Preparations and Arrangement
 
