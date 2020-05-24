@@ -6,6 +6,7 @@
 import numpy as np
 import glob, json, torch, random
 import torch.utils.data as Data
+import torch
 import torch.nn as nn
 from torchvision import transforms
 from openvqa.utils.feat_filter import feat_filter
@@ -50,11 +51,14 @@ class BaseDataSet(Data.Dataset):
 
         img_iter = self.normalize(img_iter)
 
+        assert img_iter.shape == torch.Size([3, 224, 224]), "img_iter.shape does not match, img_iter.shape = " + img_iter.shape
+
+        
         return \
-            img_iter,\
-            torch.from_numpy(frcn_feat_iter),\
-            torch.from_numpy(grid_feat_iter),\
-            torch.from_numpy(bbox_feat_iter),\
+            img_iter.float(),\
+            torch.from_numpy(frcn_feat_iter).float(),\
+            torch.from_numpy(grid_feat_iter).float(),\
+            torch.from_numpy(bbox_feat_iter).float(),\
             torch.from_numpy(ques_ix_iter),\
             torch.from_numpy(ans_iter)
 
